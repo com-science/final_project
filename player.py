@@ -76,11 +76,12 @@ class Marker:
     # 현재 말의 위치를 반환한다.
     def get_position(self):
         return self.__position
-
+    
+    # 말의 위치를 초기화한다.
     def reset_position(self):
         self.__position = 0
 
-    # 말을 distance 만큼 이동시킨다.
+    # 말을 distance 만큼 이동시킨다. 그리고 그 때 몇 바퀴를 돌았는지를 리턴한다.
     # TODO: 화면에서 말을 이동시키는 부분을 추가한다.
     def move(self, distance):
         rotate_times = (self.__position + distance) // constant.TOTAL_REGIONS
