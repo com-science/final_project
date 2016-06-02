@@ -1,6 +1,6 @@
 import constant
 import player
-
+# region id를 가져올 수 있는 get_region_id()를 추가했습니다
 
 class Region:
     __no = 0  # 땅의 총 수를 의미한다.
@@ -10,14 +10,17 @@ class Region:
         self.__id = Region.__no  # 땅의 id
         self.__name = name  # 땅의 명칭
         self.__owner = None  # 소유자. 타입은 player.Player 로 한다.
-        self.__initial_price = initial_price  # 초기 구매 비용
+        self.initial_price = initial_price  # 초기 구매 비용
         self.__current_price = initial_price  # 현재 구매 비용
         self.__is_desert = is_desert  # 무인도 여부
 
     # 지역의 속성을 초기화 한다. (게임을 재시작할 경우에 실행해야 한다.)
     def reset(self):
         self.__owner = None  # 소유자 초기화
-        self.__current_price = self.__initial_price  # 현재 땅의 금액을 초기화
+        self.__current_price = self.initial_price  # 현재 땅의 금액을 초기화
+
+    def get_region_id(self):
+        return self.__id
 
     # 그 지역의 통행료를 리턴한다.
     def get_toll(self):
@@ -37,6 +40,10 @@ class Region:
     # 그 지역이 사막인지 여부를 리턴한다.
     def is_desert(self):
         return self.__is_desert
+
+    # 지역을 무인도로 설정한다.
+    def set_desert(self):
+        self.__is_desert = True
 
     # 그 지역을 업그레이드를 하기 위해 필요한 금액을 리턴한다. 소수점은 버린다.
     def __get_upgrade_price(self):
@@ -81,7 +88,9 @@ class Region:
         if self.is_desert():
             return False
         sales_price = self.get_sales_price(_player.get_id())  # 판매 금액 얻기.
-        if self.__owner.get_id() != _player.get_id():  # 소유자가 다른 경우에는 지역을 구매하는데 든 돈을 이전 소유자에게 지불.
+        if self.__owner is None: # 밑에 owner.get id != player.get id에서 owner가 None인 경우 애러가 나서 수정했습니다.
+            is_success = _player.pay_money(sales_price)
+        elif self.__owner.get_id() != _player.get_id():  # 소유자가 다른 경우에는 지역을 구매하는데 든 돈을 이전 소유자에게 지불.
             is_success = _player.pay_money(sales_price, self.__owner)
         else:  # 소유자가 없거나 혹은 소유자가 같은 경우에는 단순히 돈만 감소시킨다.
             is_success = _player.pay_money(sales_price)
