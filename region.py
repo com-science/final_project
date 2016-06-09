@@ -5,7 +5,7 @@ import player
 class Region:
     __no = 0  # 땅의 총 수를 의미한다.
 
-    def __init__(self, name, initial_price=0, is_desert=False):
+    def __init__(self, name, initial_price=0, is_desert=False, root_view=None, _x=0, _y=0):
         Region.__no += 1
         self.__id = Region.__no  # 땅의 id
         self.__name = name  # 땅의 명칭
@@ -13,6 +13,9 @@ class Region:
         self.initial_price = initial_price  # 초기 구매 비용
         self.__current_price = initial_price  # 현재 구매 비용
         self.__is_desert = is_desert  # 무인도 여부
+        if root_view is not None:
+            self.__Rect = RegionRect(root_view, name, self.__current_price)
+            self.__Rect.grid(column=_x, row=_y)
 
     # 지역의 속성을 초기화 한다. (게임을 재시작할 경우에 실행해야 한다.)
     def reset(self):
@@ -99,3 +102,73 @@ class Region:
             self.__change_owner(_player)  # 소유자 변경
             self.__current_price = sales_price  # 현재 금액 업데이트
         return is_success
+
+
+import tkinter as tk
+
+
+class RegionRect(tk.Frame):
+    def __init__(self, master=None, region_name="", price=0):
+        tk.Frame.__init__(self, master=master, width=100, height=100, bg="white", bd=2)
+        self.__region_label = tk.Label(self, text=region_name, bg="red")
+        self.__region_label.pack(fill=tk.X)
+        self.__price_label = tk.Label(self, text=price, bg="yellow")
+        self.__price_label.pack(fill=tk.X)
+        self.pack_propagate(0)
+
+    def update_price(self, price):
+        self.__price_label.config(text=price)
+
+def test():
+    root_view = tk.Tk()
+    #w = tk.Label(root_view, text="Red", bg="red", fg="white")
+    #RegionRect(root_view, "정문").grid(row=1, column=1)
+    #RegionRect(root_view, "법대").grid(row=2, column=1)
+    #RegionRect(root_view, "가나").grid(row=2, column=2)
+    idx = 1
+    price = 200
+    for i in range(1, 6):
+        rect = RegionRect(root_view, "r%d" % idx)
+        rect.grid(row=i, column=1)
+        rect.update_price(price*idx)
+        idx+=1
+    for i in range(2, 6):
+        rect = RegionRect(root_view, "r%d" % idx)
+        rect.grid(row=5, column=i)
+        rect.update_price(price*idx)
+        idx+=1
+    for i in range(2, 6):
+        rect = RegionRect(root_view, "r%d" % idx)
+        rect.grid(row=6-i, column=5)
+        rect.update_price(price*idx)
+        idx+=1
+
+    for i in range(1, 6):
+        rect = RegionRect(root_view, "r%d" % idx)
+        rect.grid(row=0, column=6-i)
+        rect.update_price(price*idx)
+        idx+=1
+
+    root_view.mainloop()
+
+
+def test2():
+    region_name_list = ['정문', '법대', '규장각', '사회대', '문화관', '잔디밭', '학생회관', '자연대',
+                    '농생대', '농식', '해동','아랫공대', '공깡', '중도','관정', '인문대', '인문신양',
+                    '자하연', '음미대', '경영대', '체육관', 'MOA', '대운동장', '문예관', '감골식당',
+                    '사범대', '롯데리아', '느티나무', '기숙사', '버들골', '노천강당', '파스쿠치', '씨유','301동'
+                    ,'녹두', '설입']
+    region_price_list = [0, 500, 500, 500, 800, 800, 800, 1000, 1000, 1000, 1200, 1200, 1200, 1500, 1500, 1500, 1800,
+                     1800, 1800, 2000, 2000, 2000, 2100, 2100, 2100, 2400, 2400, 2400, 2600, 2600, 2600, 2800, 2800, 2800,
+                     3000, 3000]
+    x_pos = [0 for i in range(constant.ROW_OF_REGIONS - 1)] + [i for i in range(constant.COLUMN_OF_REGIONS - 1)] + [constant.COLUMN_OF_REGIONS - 1 for i in range(constant.ROW_OF_REGIONS - 1)] + [(constant.COLUMN_OF_REGIONS - 1 - i) for i in range(constant.COLUMN_OF_REGIONS - 1)]
+    print(x_pos)
+    y_pos = [i for i in range(constant.ROW_OF_REGIONS - 1)] + [constant.ROW_OF_REGIONS - 1 for i in range(constant.COLUMN_OF_REGIONS - 1)] + [(constant.ROW_OF_REGIONS - 1 - i) for i in range(constant.ROW_OF_REGIONS - 1)] + [0 for i in range(constant.COLUMN_OF_REGIONS - 1)]
+    print(y_pos)
+    root_view = tk.Tk()
+    region__list = [Region(region_name_list[i], region_price_list[i], root_view=root_view, _x=x_pos[i], _y=y_pos[i]) for i in range(constant.TOTAL_REGIONS)]
+
+    #tk.Button(text="Button").place(x=250, y=500)
+    root_view.mainloop()
+
+test2()
