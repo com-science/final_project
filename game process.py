@@ -30,6 +30,7 @@ region_price_list = [0, 500, 1600, 2100, 1500, 800, 1800, 1000, 2000, 1400, 1200
 # 지역이름과 가격으로 리스트 작성
 region__list = [region.Region(region_name_list[i], region_price_list[i]) for i in range(28)]
 region__list[14].set_desert()
+region__list[0].set_cannot_buy()
 
 START_MONEY = 10000
 g = Map()

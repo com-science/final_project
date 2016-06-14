@@ -17,6 +17,15 @@ class Region:
         if root_view is not None:
             self.__Rect = RegionRect(root_view, name, self.__current_price)
             self.__Rect.grid(column=_x, row=_y)
+        self.__can_buy = True
+
+    # 지역을 구매할 수 없게 한다.
+    def set_cannot_buy(self):
+        self.__can_buy = False
+
+    def can_buy(self):
+        # __can_buy 변수를 변경할 수 없게 하기 위한 용도.
+        return self.__can_buy is True
 
     # 지역의 속성을 초기화 한다. (게임을 재시작할 경우에 실행해야 한다.)
     def reset(self):
@@ -45,9 +54,10 @@ class Region:
     def is_desert(self):
         return self.__is_desert
 
-    # 지역을 무인도로 설정한다.
+    # 지역을 무인도로 설정한다. 무인도의 경우 구입을 할 수 없게 한다.
     def set_desert(self):
         self.__is_desert = True
+        self.set_cannot_buy()
 
     # 그 지역을 업그레이드를 하기 위해 필요한 금액을 리턴한다. 소수점은 버린다.
     def __get_upgrade_price(self):

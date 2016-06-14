@@ -72,13 +72,14 @@ class Game:
                   % (_player.get_player_name(), _toll, current_region.get_owner().get_player_name()))
         # 지역 구매 여부 묻기
         current_region_price = current_region.get_sales_price(_player.get_id())
-        if _player.get_current_money() >= current_region_price:
+        if _player.get_current_money() >= current_region_price and current_region.can_buy():
             want_to_buy = messagebox.askyesno("Buy", constant.ASK_BUY_MESSAGE[_type] % current_region_price)
             if want_to_buy:
                     current_region.buy(_player)
         return dice1, dice2
 
     # For testing player move method. (no random)
+    """
     def test_player_move(self, _player: player.Player, dice1: int, dice2: int):
         current_region = self.__region_list[_player.move(dice1, dice2)]  # 현재 _player 가 있는 지역
         assert isinstance(current_region, region.Region)  # 적절한 값인지 체크
@@ -99,6 +100,7 @@ class Game:
                     current_region.buy(_player)
             elif ask is 'N':
                 pass
+    """
 
     # 모든 플레이어가 한 턴 동안 하는 일.
     # 게임이 끝나지 않는 경우에는 None 을 리턴하고, 누군가가 파산해서 게임이 끝나는 경우에는 파산한 플레이어의 id 를 리턴한다.
@@ -135,6 +137,7 @@ def main():
     region__list[18].set_desert()
     player__list = [player.Player() for i in range(2)]
     New_game = Game(region__list, player__list)
+    """
     New_game.test_player_move(player__list[0], 9, 9)
     print(player__list[0].get_current_position())
     New_game.test_player_move(player__list[0], 7, 3)
@@ -149,7 +152,7 @@ def main():
     print(player__list[0].get_current_position())
     New_game.test_player_move(player__list[0], 2, 2)
     print(player__list[0].get_current_position())
-
+    """
 
 
 
