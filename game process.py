@@ -1,3 +1,4 @@
+"""
 import game
 import constant
 import player
@@ -162,3 +163,4 @@ dice_button = Button(g.tk, text='roll dices', command=game_test)
 dice_button.pack()
 g.tk.mainloop()
 
+"""
