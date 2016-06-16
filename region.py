@@ -1,7 +1,6 @@
 import constant
 import player
 import tkinter as tk
-# region id를 가져올 수 있는 get_region_id()를 추가했습니다
 
 
 class Region:
@@ -16,13 +15,9 @@ class Region:
         self.__current_price = initial_price  # 현재 구매 비용
         self.__is_desert = is_desert  # 무인도 여부
         self.set_view(root_view, _x, _y)
-        """
-        if root_view is not None:
-            self.__Rect = RegionRect(root_view, name, self.__current_price)
-            self.__Rect.grid(column=_x, row=_y)
-        """
         self.__can_buy = True
 
+    # set region view.
     def set_view(self, root_view: tk.Canvas=None, _x=0, _y=0):
         if isinstance(root_view, tk.Canvas):
             self.__Rect = RegionRect(root_view, self.__name, self.__current_price)
@@ -137,6 +132,7 @@ class Region:
     def get_current_price(self):
         return self.__current_price
 
+
 class RegionRect(tk.Frame):
     def __init__(self, master=None, region_name="", price=0):
         tk.Frame.__init__(self, master=master, width=90, height=42)
@@ -146,81 +142,9 @@ class RegionRect(tk.Frame):
         self.__price_label = tk.Label(self, text=price, bg="yellow")
         self.__price_label.pack(fill=tk.X)
         self.pack_propagate(0)
-        """
-        tk.Frame.__init__(self, master=master, width=90, height=42)
-        self.__region_label = make_label(self, 90, 21, text=region_name, bg="red")
-        self.__price_label = make_label(self, 90, 21, text=price, bg="yellow")
-        self.__region_label.pack(fill=tk.X)
-        self.__price_label.pack(fill=tk.X)
-        self.pack_propagate(0)
-        """
-        """
-        tk.Frame.__init__(self, master=master, width=90, height=80)#, bg="white", bd=2)
-        self.__region_label = tk.Label(self, text=region_name, bg="red")
-        self.__region_label.pack(fill=tk.X)
-        self.__price_label = tk.Label(self, text=price, bg="yellow")
-        self.__price_label.pack(fill=tk.X)
-        self.pack_propagate(0)
-        """
 
     def update_price(self, price):
         self.__price_label.config(text=price)
 
     def change_owner(self, color):
         self.__region_label.config(bg=color)
-
-def test():
-    root_view = tk.Tk()
-    #w = tk.Label(root_view, text="Red", bg="red", fg="white")
-    #RegionRect(root_view, "정문").grid(row=1, column=1)
-    #RegionRect(root_view, "법대").grid(row=2, column=1)
-    #RegionRect(root_view, "가나").grid(row=2, column=2)
-    idx = 1
-    price = 200
-    for i in range(1, 6):
-        rect = RegionRect(root_view, "r%d" % idx)
-        rect.grid(row=i, column=1)
-        rect.update_price(price*idx)
-        idx+=1
-    for i in range(2, 6):
-        rect = RegionRect(root_view, "r%d" % idx)
-        rect.grid(row=5, column=i)
-        rect.update_price(price*idx)
-        idx+=1
-    for i in range(2, 6):
-        rect = RegionRect(root_view, "r%d" % idx)
-        rect.grid(row=6-i, column=5)
-        rect.update_price(price*idx)
-        idx+=1
-
-    for i in range(1, 6):
-        rect = RegionRect(root_view, "r%d" % idx)
-        rect.grid(row=0, column=6-i)
-        rect.update_price(price*idx)
-        idx+=1
-
-    root_view.mainloop()
-
-
-def test2():
-    region_name_list = ['정문', '법대', '규장각', '사회대', '문화관', '잔디밭', '학생회관', '자연대',
-                    '농생대', '농식', '해동', '아랫공대', '공깡', '중도', '관정', '인문대', '인문신양',
-                    '자하연', '음미대', '경영대', '체육관', 'MOA', '대운동장', '기숙사', '감골식당',
-                    '사범대', '롯데리아', '느티나무']
-    region_price_list = [0, 500, 1600, 2100, 1500, 800, 1800, 1000, 2000, 1400, 1200, 2500, 1200, 1500, 800, 1500, 2200,
-                     1300, 1800, 800, 2000, 1200, 900, 1100, 2100, 1300, 1600, 2700]
-    x_pos = [0 for i in range(constant.ROW_OF_REGIONS - 1)] + [i for i in range(constant.COLUMN_OF_REGIONS - 1)] + [constant.COLUMN_OF_REGIONS - 1 for i in range(constant.ROW_OF_REGIONS - 1)] + [(constant.COLUMN_OF_REGIONS - 1 - i) for i in range(constant.COLUMN_OF_REGIONS - 1)]
-    print(x_pos)
-    y_pos = [i for i in range(constant.ROW_OF_REGIONS - 1)] + [constant.ROW_OF_REGIONS - 1 for i in range(constant.COLUMN_OF_REGIONS - 1)] + [(constant.ROW_OF_REGIONS - 1 - i) for i in range(constant.ROW_OF_REGIONS - 1)] + [0 for i in range(constant.COLUMN_OF_REGIONS - 1)]
-    print(y_pos)
-    root = tk.Tk()
-    root_view = tk.Canvas(root)
-    root_view.pack()
-    region__list = [Region(region_name_list[i], region_price_list[i], root_view=root_view, _x=x_pos[i], _y=y_pos[i]) for i in range(constant.TOTAL_REGIONS)]
-    root.update_idletasks()
-    #region__list[0].reset()
-    #tk.Button(text="Button").place(x=250, y=500)
-    root_view.mainloop()
-
-if __name__ == "__main__":
-    test2()

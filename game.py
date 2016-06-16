@@ -14,20 +14,10 @@ format_time = lambda seconds : "Elapsed time -> %02d:%02d"%(seconds//60, seconds
 
 format_currency = lambda money: "${:,}".format(money)
 
+
 class Game:
-    def __init__(self, region_info=None, players_name=None, main_view=None):
-        """
-        if player_list is None:
-            # player_list 가 없는 경우에는 자동으로 constant.PLAYER_NO 에 해당하는 만큼 player 를 생성해서 넣는다.
-            self.__player_list = []
-            for i in range(constant.PLAYER_NO):
-                self.__player_list.append(player.Player())
-        else:
-            # player_list 가 있는 경우에는 이것을 사용하고 알맞은 플레이어 수로 업데이트한다.
-            self.__player_list = player_list
-            constant.PLAYER_NO = len(player_list)
-        """
-        #self.__region_list = region_info  # 맵에 있는 모든 땅의 정보를 의미한다.
+    def __init__(self, region_info=None, players_name=None):
+        main_view = MainView()
         self.__main_view = main_view
         self.__canvas = main_view.map_canvas
         assert len(region_info) == constant.TOTAL_REGIONS
@@ -80,18 +70,13 @@ class Game:
             self.__players_name_label[i].grid(row=2*i, column=1)
             self.__players_money_label[i].grid(row=2*i+1, column=1)
 
+    # update timer text.
     def update_timer(self):
         if not self.__timer_on:
             return
         self.__elapsed_time += 1
         self.__timer_label.config(text=format_time(self.__elapsed_time))
         self.__main_view.after(1000, self.update_timer)
-
-    def get_player_list(self):
-        return self.__player_list
-
-    def get_region_list(self):
-        return self.__region_list
 
     # 게임을 재시작한다.
     def reset(self):
@@ -121,7 +106,6 @@ class Game:
     # 주사위 2개를 던져서 나온 눈의 수를 tuple 형태로 리턴한다. 여기에서 주사위 이미지를 업데이트 하도록 한다.
     def roll_dice(self):
         (dice1, dice2) = (random.randint(1, 6), random.randint(1, 6))
-        # TODO: 주사위 이미지를 화면에 출력하기
         self.__dices_list[0].update_dice_num(dice1)
         self.__dices_list[1].update_dice_num(dice2)
         return dice1, dice2
@@ -193,9 +177,6 @@ class Game:
             assert isinstance(result, player.Player)
             print("%s is bankrupt!" % result.get_player_name())
             self.show_winner()
-            return
-
-        #self.reset()
 
     def show_winner(self):
         self.__timer_on = False
@@ -224,9 +205,7 @@ class MainView(tk.Tk):
         super().__init__()
         self.title(title)
         self.resizable(0, 0)
-        #self.wm_attributes("-topmost", 1)
-        #self.canvas = tk.Canvas(self, width=950, height=700)
-        #self.canvas.pack()
+        self.wm_attributes("-topmost", 1)
         self.header = tk.Frame(self)
         self.header.grid(row=0, column=0)
         self.map_canvas = tk.Canvas(self, width=950, heigh=700)
@@ -247,10 +226,11 @@ class AskMessageBox(tk.Tk):
             tk.Label(self, text="Input Player%d name" % (i+1)).grid(row=i, column=0)
             self.texts.append(tk.Entry())
             self.texts[i].grid(row=i, column=1)
-        tk.Button(self, text="Submit", command=self.callback).grid(row=2, column=0, columnspan=2)
+        tk.Button(self, text="Submit", command=self.submit).grid(row=2, column=0, columnspan=2)
         self.mainloop()
 
-    def callback(self):
+    # call when click submit button.
+    def submit(self):
         players_name = []
         for _text in self.texts:
             players_name.append(_text.get())
@@ -258,6 +238,7 @@ class AskMessageBox(tk.Tk):
         start_game(players_name)
 
 
+# start game
 def start_game(players_name):
     region_name_list = ['정문', '법대', '규장각', '사회대', '문화관', '잔디밭', '학생회관', '자연대',
                     '농생대', '농식', '해동', '아랫공대', '공깡', '중도', '관정', '인문대', '인문신양',
@@ -271,7 +252,7 @@ def start_game(players_name):
 
     regions_info = [(region_name_list[i], region_price_list[i]) for i in range(constant.TOTAL_REGIONS)]
 
-    Game(regions_info, players_name, main_view)
+    Game(regions_info, players_name)
 
     main_view.mainloop()
 

@@ -2,6 +2,7 @@ import constant
 import tkinter as tk
 import time
 
+
 class Player:
     __no = 0  # 플레이어의 총 수를 나타낸다.
 
@@ -137,20 +138,4 @@ class Marker:
         self.__position = self.__position % constant.TOTAL_REGIONS
         return rotate_times
 
-
-def main():
-    player1 = Player()
-    player2 = Player()
-
-    print(player1.get_current_money())
-    print(player2.get_current_money())
-
-    player1.pay_money(2000, player2)
-
-    print(player1.get_current_money())
-    print(player2.get_current_money())
-
-
-if __name__ == "__main__":
-    main()
 
