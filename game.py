@@ -73,7 +73,7 @@ class Game:
             350, 300,
             text="%s turn" % self.__player_list[0].get_player_name(),
             font=("Helvetica", 16),
-            fg=self.__player_list[0].get_color()
+            fill=self.__player_list[0].get_color()
         )
 
         for i in range(constant.PLAYER_NO):
@@ -114,6 +114,9 @@ class Game:
         self.__turn_label.config(text="Turn #%2d" % self.__current_turn)
         for i in range(constant.PLAYER_NO):
             self.__players_money_label[i].config(text=format_currency(self.__player_list[i].get_current_money()))
+
+        self.__main_view.map_canvas.itemconfig(self.__display_current_player, text="%s turn" % self.__player_list[0].get_player_name())
+        self.__main_view.map_canvas.itemconfig(self.__display_current_player, fill=self.__player_list[0].get_color())
 
     # 주사위 2개를 던져서 나온 눈의 수를 tuple 형태로 리턴한다. 여기에서 주사위 이미지를 업데이트 하도록 한다.
     def roll_dice(self):
@@ -163,7 +166,9 @@ class Game:
         if self.__current_player_no == 0:
             self.__current_turn += 1  # 한 턴을 증가시킨다.
             self.__turn_label.config(text="Turn #%2d" % self.__current_turn)
-        self.__display_current_player.config(text="%s turn" % self.__current_player_no, fg=_player.get_color())
+        _player = self.__player_list[(self.__current_player_no) % constant.PLAYER_NO]
+        self.__main_view.map_canvas.itemconfig(self.__display_current_player, text="%s turn" % _player.get_player_name())
+        self.__main_view.map_canvas.itemconfig(self.__display_current_player, fill=_player.get_color())
 
         return None
 
