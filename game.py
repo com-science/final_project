@@ -70,8 +70,10 @@ class Game:
                                                font=("Helvetica", 16))
                                      for i in range(constant.PLAYER_NO)]
         self.__display_current_player = self.__main_view.map_canvas.create_text(
-            420, 300,
-            text="%s turn" % self.__player_list[0].get_player_name()
+            350, 300,
+            text="%s turn" % self.__player_list[0].get_player_name(),
+            font=("Helvetica", 16),
+            fg=self.__player_list[0].get_color()
         )
 
         for i in range(constant.PLAYER_NO):
@@ -161,6 +163,8 @@ class Game:
         if self.__current_player_no == 0:
             self.__current_turn += 1  # 한 턴을 증가시킨다.
             self.__turn_label.config(text="Turn #%2d" % self.__current_turn)
+        self.__display_current_player.config(text="%s turn" % self.__current_player_no, fg=_player.get_color())
+
         return None
 
     # 하나의 게임을 시행한다.

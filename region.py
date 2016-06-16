@@ -119,17 +119,19 @@ class Region:
         if self.is_desert():
             return False
         sales_price = self.get_sales_price(_player.get_id())  # 판매 금액 얻기.
+        updated_price = sales_price
         if self.__owner is None: # 밑에 owner.get id != player.get id에서 owner가 None인 경우 애러가 나서 수정했습니다.
             is_success = _player.pay_money(sales_price)
         elif self.__owner.get_id() != _player.get_id():  # 소유자가 다른 경우에는 지역을 구매하는데 든 돈을 이전 소유자에게 지불.
             is_success = _player.pay_money(sales_price, self.__owner)
         else:  # 소유자가 없거나 혹은 소유자가 같은 경우에는 단순히 돈만 감소시킨다.
             is_success = _player.pay_money(sales_price)
+            updated_price += self.__current_price
 
         if is_success:  # 구매가 성공한 경우
             self.__change_owner(_player)  # 소유자 변경
-            self.__current_price = sales_price  # 현재 금액 업데이트
-            self.__Rect.update_price(sales_price)
+            self.__current_price = updated_price  # 현재 금액 업데이트
+            self.__Rect.update_price(self.__current_price)
         return is_success
 
     def get_current_price(self):
