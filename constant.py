@@ -21,5 +21,7 @@ ASK_BUY_MESSAGE = {
     REGION_UPGRADE: "Do you want to upgrade this region?($%d)",
 }
 
+# Implement of x position of region in map.
 REGION_OF_X_POS = [0 for i in range(ROW_OF_REGIONS - 1)] + [i for i in range(COLUMN_OF_REGIONS - 1)] + [COLUMN_OF_REGIONS - 1 for i in range(ROW_OF_REGIONS - 1)] + [(COLUMN_OF_REGIONS - 1 - i) for i in range(COLUMN_OF_REGIONS - 1)]
+# Implement of y position of region in map.
 REGION_OF_Y_POS = [i for i in range(ROW_OF_REGIONS - 1)] + [ROW_OF_REGIONS - 1 for i in range(COLUMN_OF_REGIONS - 1)] + [(ROW_OF_REGIONS - 1 - i) for i in range(ROW_OF_REGIONS - 1)] + [0 for i in range(COLUMN_OF_REGIONS - 1)]
