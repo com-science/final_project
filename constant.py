@@ -1,5 +1,5 @@
 START_MONEY = 10000  # 초기 자본
-PLAYER_NO = 2  # 플레이어의 수
+PLAYER_NO = 2  # 플레이어의 수 Do not change it!
 ROW_OF_REGIONS = 8 # 한 행에 있는 땅의 개수
 COLUMN_OF_REGIONS = 8 # 한 열에 있는 땅의 개수
 TOTAL_REGIONS = ((ROW_OF_REGIONS - 1) + (COLUMN_OF_REGIONS - 1)) * 2  # 총 땅의 수
@@ -19,3 +19,6 @@ ASK_BUY_MESSAGE = {
     REGION_CHANGE_OWNER: "Do you want to buy this region?($%d)",
     REGION_UPGRADE: "Do you want to upgrade this region?($%d)",
 }
+
+REGION_OF_X_POS = [0 for i in range(ROW_OF_REGIONS - 1)] + [i for i in range(COLUMN_OF_REGIONS - 1)] + [COLUMN_OF_REGIONS - 1 for i in range(ROW_OF_REGIONS - 1)] + [(COLUMN_OF_REGIONS - 1 - i) for i in range(COLUMN_OF_REGIONS - 1)]
+REGION_OF_Y_POS = [i for i in range(ROW_OF_REGIONS - 1)] + [ROW_OF_REGIONS - 1 for i in range(COLUMN_OF_REGIONS - 1)] + [(ROW_OF_REGIONS - 1 - i) for i in range(ROW_OF_REGIONS - 1)] + [0 for i in range(COLUMN_OF_REGIONS - 1)]

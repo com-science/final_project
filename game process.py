@@ -84,7 +84,7 @@ player2 = player.Player('B', g.canvas, 'blue')
 player__list = [player1, player2]
 
 # 새로운 게임 생성, 위에서 작성한 region list와 player list를 이용
-New_game = game.Game(region__list, player__list, g.canvas)
+New_game = game.Game(region__list, player__list, g)
 player_dice_result = g.canvas.create_text(275, 300, anchor=NW, text="player %d turn" % 1)
 
 
@@ -116,6 +116,7 @@ def one_player_move(_no):
     if _no == 2:
         if New_game.one_turn() is not None:
             print(current__player.get_id())
+            return {"bankrupt" : current__player.get_id()}
 
     if isinstance(dice_button, Button):
         dice_button.configure(state=NORMAL)
@@ -149,6 +150,8 @@ def game_test():
 
     START_MONEY = 10000
     _current_player_id = one_player_move(_current_player_id)
+    if isinstance(_current_player_id, dict):
+        print(_current_player_id['bankrupt'])
     if dice_num[0] == dice_num[1]:
         _current_player_id -= 1
     # _current_player_id = (_current_player_id + 1) % constant.PLAYER_NO

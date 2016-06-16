@@ -1,5 +1,6 @@
 import constant
 import player
+import tkinter as tk
 # region id를 가져올 수 있는 get_region_id()를 추가했습니다
 
 
@@ -14,10 +15,22 @@ class Region:
         self.initial_price = initial_price  # 초기 구매 비용
         self.__current_price = initial_price  # 현재 구매 비용
         self.__is_desert = is_desert  # 무인도 여부
+        self.set_view(root_view, _x, _y)
+        """
         if root_view is not None:
             self.__Rect = RegionRect(root_view, name, self.__current_price)
             self.__Rect.grid(column=_x, row=_y)
+        """
         self.__can_buy = True
+
+    def set_view(self, root_view: tk.Canvas=None, _x=0, _y=0):
+        if isinstance(root_view, tk.Canvas):
+            self.__Rect = RegionRect(root_view, self.__name, self.__current_price)
+            self.__Rect.grid(column=_x, row=2*_y)
+            frame = tk.Frame(root_view, height=38, width=0)
+            frame.grid(column=_x, row=2*_y+1)
+            x,y=_x*90, _y*80
+            root_view.create_rectangle(x,y, x+90, y+80, width=1, fill="white")
 
     # 지역을 구매할 수 없게 한다.
     def set_cannot_buy(self):
@@ -31,6 +44,9 @@ class Region:
     def reset(self):
         self.__owner = None  # 소유자 초기화
         self.__current_price = self.initial_price  # 현재 땅의 금액을 초기화
+        # Update view.
+        self.__Rect.update_price(self.__current_price)
+        self.__Rect.change_owner('green')
 
     def get_region_id(self):
         return self.__id
@@ -87,6 +103,7 @@ class Region:
             return
         elif self.__owner is not _player:  # 이전 소유자와 다른 경우에는 업데이트한다.
             self.__owner = _player
+            self.__Rect.change_owner(_player.get_color())
 
     def get_buy_type(self, _player_id: int):
         if self.__owner is None:
@@ -112,22 +129,43 @@ class Region:
         if is_success:  # 구매가 성공한 경우
             self.__change_owner(_player)  # 소유자 변경
             self.__current_price = sales_price  # 현재 금액 업데이트
+            self.__Rect.update_price(sales_price)
         return is_success
 
-import tkinter as tk
-
+    def get_current_price(self):
+        return self.__current_price
 
 class RegionRect(tk.Frame):
     def __init__(self, master=None, region_name="", price=0):
-        tk.Frame.__init__(self, master=master, width=90, height=80, bg="white", bd=2)
+        tk.Frame.__init__(self, master=master, width=90, height=42)
+
+        self.__region_label = tk.Label(self, text=region_name, bg="green")
+        self.__region_label.pack(fill=tk.X)
+        self.__price_label = tk.Label(self, text=price, bg="yellow")
+        self.__price_label.pack(fill=tk.X)
+        self.pack_propagate(0)
+        """
+        tk.Frame.__init__(self, master=master, width=90, height=42)
+        self.__region_label = make_label(self, 90, 21, text=region_name, bg="red")
+        self.__price_label = make_label(self, 90, 21, text=price, bg="yellow")
+        self.__region_label.pack(fill=tk.X)
+        self.__price_label.pack(fill=tk.X)
+        self.pack_propagate(0)
+        """
+        """
+        tk.Frame.__init__(self, master=master, width=90, height=80)#, bg="white", bd=2)
         self.__region_label = tk.Label(self, text=region_name, bg="red")
         self.__region_label.pack(fill=tk.X)
         self.__price_label = tk.Label(self, text=price, bg="yellow")
         self.__price_label.pack(fill=tk.X)
         self.pack_propagate(0)
+        """
 
     def update_price(self, price):
         self.__price_label.config(text=price)
+
+    def change_owner(self, color):
+        self.__region_label.config(bg=color)
 
 def test():
     root_view = tk.Tk()
@@ -173,10 +211,14 @@ def test2():
     print(x_pos)
     y_pos = [i for i in range(constant.ROW_OF_REGIONS - 1)] + [constant.ROW_OF_REGIONS - 1 for i in range(constant.COLUMN_OF_REGIONS - 1)] + [(constant.ROW_OF_REGIONS - 1 - i) for i in range(constant.ROW_OF_REGIONS - 1)] + [0 for i in range(constant.COLUMN_OF_REGIONS - 1)]
     print(y_pos)
-    root_view = tk.Tk()
+    root = tk.Tk()
+    root_view = tk.Canvas(root)
+    root_view.pack()
     region__list = [Region(region_name_list[i], region_price_list[i], root_view=root_view, _x=x_pos[i], _y=y_pos[i]) for i in range(constant.TOTAL_REGIONS)]
-
+    root.update_idletasks()
+    #region__list[0].reset()
     #tk.Button(text="Button").place(x=250, y=500)
     root_view.mainloop()
 
-#test2()
+if __name__ == "__main__":
+    test2()

@@ -19,6 +19,9 @@ class Player:
             self.__player_name = player_name
         self.__check_desert = False  # 무인도에 처음으로 들어갔는지 체크
 
+    def get_color(self):
+        return self.__marker.get_color()
+
     # 플레이어의 속성을 초기화한다. (게임을 재시작할 경우에 실행해야 한다.)
     def reset(self):
         self.__money = constant.START_MONEY  # 소지 금액 초기화
@@ -90,12 +93,15 @@ class Marker:
         self.__position = 0  # 현재 말의 위치
         self.__text = str(player_id)
         self.__canvas = canvas
-        self.__start_x, self.__start_y = 570+(player_id-1)*25, 600
+        self.__start_x, self.__start_y = 20+(player_id-1)*30, 50
+        self.__color = color
         if canvas is not None:
             self.__item = canvas.create_oval(0, 0, 20, 20)
             if color is not None:
                 self.__canvas.itemconfig(self.__item, fill=color)
                 self.__canvas.move(self.__item, self.__start_x, self.__start_y)
+        self.__diff_x = 90
+        self.__diff_y = 80
 
     # 현재 말의 위치를 반환한다.
     def get_position(self):
@@ -103,28 +109,30 @@ class Marker:
 
     # 말의 위치를 초기화한다.
     def reset_position(self):
+        self.__canvas.move(self.__item,
+                           -constant.REGION_OF_X_POS[self.__position]*self.__diff_x,
+                           -constant.REGION_OF_Y_POS[self.__position]*self.__diff_y)
         self.__position = 0
 
+    def get_move(self, pos):
+        cur_pos = pos % constant.TOTAL_REGIONS
+        next_pos = (pos + 1) % constant.TOTAL_REGIONS
+        return constant.REGION_OF_X_POS[next_pos] - constant.REGION_OF_X_POS[cur_pos],\
+                    constant.REGION_OF_Y_POS[next_pos] - constant.REGION_OF_Y_POS[cur_pos]
+
+    def get_color(self):
+        return self.__color
+
     # 말을 distance 만큼 이동시킨다. 그리고 그 때 몇 바퀴를 돌았는지를 리턴한다.
-    # TODO: 화면에서 말을 이동시키는 부분을 추가한다.
     def move(self, distance):
         prev_pos = self.__position
         self.__position += distance
         while prev_pos < self.__position:
-            mov_x, mov_y = 0, 0
-            if (prev_pos % constant.TOTAL_REGIONS) < constant.COLUMN_OF_REGIONS - 1:
-                mov_y = -70
-            elif (prev_pos % constant.TOTAL_REGIONS) < constant.COLUMN_OF_REGIONS + constant.ROW_OF_REGIONS - 2:
-                mov_x = -70
-            elif (prev_pos % constant.TOTAL_REGIONS) < constant.COLUMN_OF_REGIONS * 2 + constant.ROW_OF_REGIONS - 3:
-                mov_y = 70
-            else:
-                mov_x = 70
-            self.__canvas.move(self.__item, mov_x, mov_y)
+            mov_x, mov_y = self.get_move(prev_pos)
+            self.__canvas.move(self.__item, mov_x*self.__diff_x, mov_y*self.__diff_y)
             self.__canvas.update()
             time.sleep(0.2)
             prev_pos += 1
-        print()
         rotate_times = self.__position // constant.TOTAL_REGIONS
         self.__position = self.__position % constant.TOTAL_REGIONS
         return rotate_times
