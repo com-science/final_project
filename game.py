@@ -135,6 +135,7 @@ class Game:
         _type = current_region.get_buy_type(_player.get_id())  # 구매 타입을 정한다. constant.py 에 있는 내용 참조.
         if current_region.is_desert() and not _player.check_desert():
             _player.set_stop()
+            messagebox.showerror("Desert", "You are in desert!")
         # 통행료 지급하는 부분
         if _player.get_id() != current_region.get_owner_id() and current_region.get_owner_id() is not None:
             _toll = current_region.get_toll()
@@ -149,6 +150,8 @@ class Game:
                     current_region.buy(_player)
         if dice1 != dice2:
             self.__current_player_no = (self.__current_player_no + 1) % constant.PLAYER_NO
+        else:
+            messagebox.showinfo("Double", "Your dices ar Double!")
         return dice1, dice2
 
     # 모든 플레이어가 한 턴 동안 하는 일.
@@ -215,6 +218,7 @@ class Game:
                 scores[_id-1] += _region.get_current_price()
         return scores
 
+
 class MainView(tk.Tk):
     def __init__(self, title="Game 1.0"):
         super().__init__()
@@ -234,7 +238,27 @@ class MainView(tk.Tk):
         self.update()
 
 
-def main():
+class AskMessageBox(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Config")
+        self.texts = []
+        for i in range(constant.PLAYER_NO):
+            tk.Label(self, text="Input Player%d name" % (i+1)).grid(row=i, column=0)
+            self.texts.append(tk.Entry())
+            self.texts[i].grid(row=i, column=1)
+        tk.Button(self, text="Submit", command=self.callback).grid(row=2, column=0, columnspan=2)
+        self.mainloop()
+
+    def callback(self):
+        players_name = []
+        for _text in self.texts:
+            players_name.append(_text.get())
+        self.destroy()
+        start_game(players_name)
+
+
+def start_game(players_name):
     region_name_list = ['정문', '법대', '규장각', '사회대', '문화관', '잔디밭', '학생회관', '자연대',
                     '농생대', '농식', '해동', '아랫공대', '공깡', '중도', '관정', '인문대', '인문신양',
                     '자하연', '음미대', '경영대', '체육관', 'MOA', '대운동장', '기숙사', '감골식당',
@@ -245,15 +269,12 @@ def main():
     # 지역이름과 가격으로 리스트 작성
     main_view = MainView()
 
-    #region__list = [region.Region(region_name_list[i], region_price_list[i]) for i in range(constant.TOTAL_REGIONS)]
-    #region__list = [region.Region(region_name_list[i], region_price_list[i], root_view=canvas, _x=constant.REGION_OF_X_POS[i], _y=constant.REGION_OF_Y_POS[i]) for i in range(constant.TOTAL_REGIONS)]
     regions_info = [(region_name_list[i], region_price_list[i]) for i in range(constant.TOTAL_REGIONS)]
-    players_name = [None for i in range(2)]
 
-    New_game = Game(regions_info, players_name, main_view)
+    Game(regions_info, players_name, main_view)
 
     main_view.mainloop()
 
 
 if __name__ == "__main__":
-    main()
+    s = AskMessageBox()
