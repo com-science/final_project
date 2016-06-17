@@ -291,7 +291,11 @@ class SettingPlayerNames(tk.Tk):
     def submit(self):
         players_name = []
         for _text in self.texts:
-            players_name.append(_text.get())
+            add_item = _text.get().strip()
+            if add_item == "":
+                players_name.append(None)
+            else:
+                players_name.append(add_item)
         self.destroy()
         start_game(players_name)
 
